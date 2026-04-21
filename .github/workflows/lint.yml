@@ -32,14 +32,11 @@ jobs:
       - name: Run Pint
         run: composer lint
 
-      - name: Format Frontend
-        run: npm run format
-
       - name: Lint Frontend
-        run: npm run lint
+        run: npm run lint:fix
 
       - name: Commit Changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: fix code style
-          commit_options: '--no-verify'
+          commit_options: --no-verify

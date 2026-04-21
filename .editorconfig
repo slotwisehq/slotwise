@@ -11,7 +11,10 @@ trim_trailing_whitespace = true
 [*.md]
 trim_trailing_whitespace = false
 
-[*.{yml,yaml}]
+[*.{yml,yaml,ts,vue}]
+indent_size = 2
+
+[tsconfig.json]
 indent_size = 2
 
 [compose.yaml]
