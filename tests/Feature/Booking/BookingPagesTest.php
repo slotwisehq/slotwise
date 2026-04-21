@@ -24,7 +24,7 @@ function makeTenantWithService(bool $serviceActive = true): array
     return [$tenant, $service];
 }
 
-function makeStaffWithSchedule(Tenant $tenant): Staff
+function makeScheduledStaff(Tenant $tenant): Staff
 {
     $staff = Staff::factory()->for($tenant)->create();
     Schedule::factory()->forStaff($staff)->create(['day_of_week' => 1, 'start_time' => '09:00:00', 'end_time' => '17:00:00']);
@@ -69,7 +69,7 @@ describe('service picker', function () {
 describe('staff picker', function () {
     it('auto-redirects to slot picker when only one staff member has schedules', function () {
         [$tenant, $service] = makeTenantWithService();
-        $staff = makeStaffWithSchedule($tenant);
+        $staff = makeScheduledStaff($tenant);
 
         $this->get(route('booking.staff', [$tenant->slug, $service->id]))
             ->assertRedirect(route('booking.slots', [$tenant->slug, $service->id, $staff->id]));
@@ -81,7 +81,7 @@ describe('staff picker', function () {
 describe('slot picker', function () {
     it('returns availability data in Inertia props', function () {
         [$tenant, $service] = makeTenantWithService();
-        $staff = makeStaffWithSchedule($tenant);
+        $staff = makeScheduledStaff($tenant);
 
         // Monday 2025-01-06 — schedule day_of_week = 1
         $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff->id]).'?date=2025-01-06')
@@ -102,7 +102,7 @@ describe('store', function () {
         Bus::fake();
 
         [$tenant, $service] = makeTenantWithService();
-        $staff = makeStaffWithSchedule($tenant);
+        $staff = makeScheduledStaff($tenant);
 
         $this->post(route('booking.store', [$tenant->slug, $service->id, $staff->id]), [
             'starts_at' => '2025-01-06 09:00:00',
@@ -118,7 +118,7 @@ describe('store', function () {
         Bus::fake();
 
         [$tenant, $service] = makeTenantWithService();
-        $staff = makeStaffWithSchedule($tenant);
+        $staff = makeScheduledStaff($tenant);
         $customer = Customer::factory()->for($tenant)->create();
 
         // Block the target slot
@@ -147,14 +147,15 @@ describe('store', function () {
         expect(Appointment::withoutGlobalScopes()->count())->toBe(1); // only the pre-seeded one
     });
 
-    it('returns 422 when required customer fields are missing', function () {
+    it('redirects back with errors when required customer fields are missing', function () {
         [$tenant, $service] = makeTenantWithService();
-        $staff = makeStaffWithSchedule($tenant);
+        $staff = makeScheduledStaff($tenant);
 
         $this->post(route('booking.store', [$tenant->slug, $service->id, $staff->id]), [
             'starts_at' => '2025-01-06 09:00:00',
             // customer_name and customer_email missing
-        ])->assertStatus(422);
+        ])->assertRedirect()
+            ->assertSessionHasErrors(['customer_name', 'customer_email']);
     });
 });
 
@@ -165,7 +166,7 @@ describe('confirmation', function () {
         Bus::fake();
 
         [$tenant, $service] = makeTenantWithService();
-        $staff = makeStaffWithSchedule($tenant);
+        $staff = makeScheduledStaff($tenant);
         $customer = Customer::factory()->for($tenant)->create(['name' => 'Clara Jones']);
 
         $appointment = Appointment::factory()->create([

@@ -42,7 +42,7 @@ class BookingController extends Controller
             ]);
 
         return Inertia::render('booking/ServicePicker', [
-            'tenant' => $tenant,
+            'tenant' => $this->tenantMeta($tenant),
             'services' => $services,
         ]);
     }
@@ -51,7 +51,7 @@ class BookingController extends Controller
     {
         TenantContext::set($tenant);
 
-        $staffMembers = Staff::has('services')
+        $staffMembers = Staff::has('schedules')
             ->orderBy('name')
             ->get(['id', 'name', 'bio', 'avatar_path'])
             ->map(fn (Staff $staff) => [
@@ -62,10 +62,13 @@ class BookingController extends Controller
             ]);
 
         if ($staffMembers->count() === 1) {
+            /** @var array{id: int} $only */
+            $only = $staffMembers->first();
+
             return redirect()->route('booking.slots', [
                 $tenant->slug,
                 $service->id,
-                $staffMembers->first()['id'],
+                $only['id'],
             ]);
         }
 
@@ -128,7 +131,7 @@ class BookingController extends Controller
                 'staff_id' => $staff->id,
                 'service_id' => $service->id,
                 'customer_id' => $customer->id,
-                'starts_at' => Carbon::parse($request->starts_at),
+                'starts_at' => Carbon::parse($request->string('starts_at')->value()),
             ]);
 
             return redirect()->route('booking.confirmation', [
@@ -136,8 +139,7 @@ class BookingController extends Controller
                 $appointment->id,
             ]);
         } catch (SlotUnavailableException) {
-            return Inertia::flash('error', 'That slot was just taken — please choose another time.')
-                ->back();
+            return back()->with('error', 'That slot was just taken — please choose another time.');
         }
     }
 
@@ -146,6 +148,8 @@ class BookingController extends Controller
         TenantContext::set($tenant);
 
         $appointment->load('service', 'staff', 'customer');
+
+        assert($appointment->service !== null && $appointment->staff !== null && $appointment->customer !== null);
 
         return Inertia::render('booking/Confirmation', [
             'tenant' => $this->tenantMeta($tenant),
@@ -160,13 +164,17 @@ class BookingController extends Controller
         ]);
     }
 
+    /** @return array{slug: string, name: string, logo_url: string|null} */
     protected function tenantMeta(Tenant $tenant): array
     {
-        $settings = $tenant->settings ?? [];
+        $settings = is_array($tenant->settings) ? $tenant->settings : [];
+
+        $logoUrl = $settings['logo_url'] ?? null;
 
         return [
+            'slug' => $tenant->slug,
             'name' => $tenant->name,
-            'logo_url' => $settings['logo_url'] ?? null,
+            'logo_url' => is_string($logoUrl) ? $logoUrl : null,
         ];
     }
 }
