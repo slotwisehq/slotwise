@@ -34,6 +34,9 @@ class Tenant extends Model
         return $this->hasMany(Service::class);
     }
 
+    /**
+     * @return HasMany<Staff, $this>
+     */
     public function staff(): HasMany
     {
         return $this->hasMany(Staff::class);
@@ -49,6 +52,9 @@ class Tenant extends Model
         return $this->hasMany(Appointment::class);
     }
 
+    /**
+     * @return HasMany<User, $this>
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
