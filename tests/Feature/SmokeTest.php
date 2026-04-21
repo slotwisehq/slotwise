@@ -16,9 +16,9 @@ beforeEach(fn () => $this->setUpTenantContext());
 afterEach(fn () => $this->tearDownTenantContext());
 
 it('creates a tenant with models and relationships', function () {
-    $service = Service::factory()->for($this->tenant)->create();
-    $staff = Staff::factory()->for($this->tenant)->create();
-    $customer = Customer::factory()->for($this->tenant)->create();
+    Service::factory()->for($this->tenant)->create();
+    Staff::factory()->for($this->tenant)->create();
+    Customer::factory()->for($this->tenant)->create();
 
     expect($this->tenant->services()->count())->toBe(1)
         ->and($this->tenant->staff()->count())->toBe(1)
