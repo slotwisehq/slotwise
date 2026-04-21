@@ -50,6 +50,9 @@ class Tenant extends Model
         return $this->hasMany(Customer::class);
     }
 
+    /**
+     * @return HasMany<Appointment, $this>
+     */
     public function appointments(): HasMany
     {
         return $this->hasMany(Appointment::class);

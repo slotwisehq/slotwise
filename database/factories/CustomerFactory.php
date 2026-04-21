@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Customer;
-use App\Models\Staff;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

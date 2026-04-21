@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tenants\Concerns;
+namespace App\Tenant\Concerns;
 
 use App\Models\Tenant;
 use App\Tenant\Scopes\TenantScope;

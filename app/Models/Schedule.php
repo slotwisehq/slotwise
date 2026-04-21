@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Tenants\Concerns\BelongsToTenant;
+use App\Tenant\Concerns\BelongsToTenant;
 use Database\Factories\ScheduleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
