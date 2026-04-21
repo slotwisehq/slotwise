@@ -14,12 +14,14 @@ trait BelongsToTenant
         static::addGlobalScope(new TenantScope);
 
         static::creating(function (self $model): void {
-            if ($model->tenant_id === null) {
-                $model->tenant_id = TenantContext::current()?->id;
+            $tenantId = TenantContext::current()?->id;
+            if ($model->getAttribute('tenant_id') === null && $tenantId !== null) {
+                $model->setAttribute('tenant_id', $tenantId);
             }
         });
     }
 
+    /** @return BelongsTo<Tenant, $this> */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

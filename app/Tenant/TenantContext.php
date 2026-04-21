@@ -10,11 +10,11 @@ class TenantContext
 
     public static function set(?Tenant $tenant): void
     {
-        static::$current = $tenant;
+        self::$current = $tenant;
     }
 
     public static function current(): ?Tenant
     {
-        return static::$current;
+        return self::$current;
     }
 }
