@@ -42,6 +42,9 @@ class Tenant extends Model
         return $this->hasMany(Staff::class);
     }
 
+    /**
+     * @return HasMany<Customer, $this>
+     */
     public function customers(): HasMany
     {
         return $this->hasMany(Customer::class);
