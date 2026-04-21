@@ -1,4 +1,4 @@
-<div align="center">
+<div style="text-align:center;">
 
 <br />
 
@@ -236,13 +236,13 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR. Key points:
 
 ## Roadmap
 
-| Milestone                   | Status         | Description                                          |
-|-----------------------------|----------------|------------------------------------------------------|
-| [v0.1](docs/milestone-1.md) | 🔄 In progress | Core booking flow, single tenant, email confirmation |
-| [v0.2](docs/milestone-2.md) | 📋 Planned     | Multi-tenancy, Stripe billing, feature gates         |
-| [v0.3](docs/milestone-3.md) | 📋 Planned     | Custom domains, SMS (Twilio), Google Calendar sync   |
-| [v0.4](docs/milestone-4.md) | 📋 Planned     | REST API v1, white-label, Stripe Connect, webhooks   |
-| [v1.0](docs/milestone-5.md) | 📋 Planned     | Analytics, Outlook sync, Docker, self-hosting docs   |
+| Milestone                    | Status       | Description                                          |
+|------------------------------|--------------|------------------------------------------------------|
+| [v0.1](docs/milestone-1.md)  |  In progress | Core booking flow, single tenant, email confirmation |
+| [v0.2](docs/milestone-2.md)  | 📋 Planned   | Multi-tenancy, Stripe billing, feature gates         |
+| [v0.3](docs/milestone-3.md)  | 📋 Planned   | Custom domains, SMS (Twilio), Google Calendar sync   |
+| [v0.4](docs/milestone-4.md)  | 📋 Planned   | REST API v1, white-label, Stripe Connect, webhooks   |
+| [v1.0](docs/milestone-5.md)  | 📋 Planned   | Analytics, Outlook sync, Docker, self-hosting docs   |
 
 Ideas for post-v1.0 (community contributions welcome):
 - Group bookings (multiple customers per slot)
@@ -319,7 +319,7 @@ Inspired by the need for a self-hostable, developer-friendly alternative to Cale
 
 ---
 
-<div align="center">
+<div style="text-align:center;">
 
 <br />
 
