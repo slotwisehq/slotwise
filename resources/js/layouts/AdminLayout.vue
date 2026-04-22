@@ -18,7 +18,7 @@ const nav = [
 
 function isActive(href: string, exact: boolean): boolean {
   if (exact) {
-    return page.url === href || page.url === href + '/'
+    return page.url === href || page.url === `${href}/`
   }
   return page.url.startsWith(href)
 }

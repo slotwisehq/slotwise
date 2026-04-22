@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Notification\Contracts\NotificationDriver;
+use App\Notification\Drivers\MailDriver;
+use App\Notification\Drivers\NullDriver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +18,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(NotificationDriver::class, function () {
+            return config('notifications.driver') === 'null'
+                ? new NullDriver
+                : new MailDriver;
+        });
     }
 
     /**
