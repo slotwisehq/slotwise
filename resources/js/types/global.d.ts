@@ -1,3 +1,4 @@
+import type { AdminTenant } from '@/types/admin'
 import type { Auth } from '@/types/auth'
 
 // Extend ImportMeta interface for Vite...
@@ -19,6 +20,7 @@ declare module '@inertiajs/core' {
     sharedPageProps: {
       name: string
       auth: Auth
+      tenant: AdminTenant | null
       sidebarOpen: boolean
       [key: string]: unknown
     }
