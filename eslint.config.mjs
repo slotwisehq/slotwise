@@ -1,9 +1,11 @@
 import antfu from '@antfu/eslint-config'
 
-export default antfu({
-  ignores: [
-    'README.md',
-    'pnpm-workspace.yaml',
-    'boost.json',
-  ],
-})
+export default antfu(
+  {
+    ignores: [
+      'README.md',
+      'pnpm-workspace.yaml',
+      'boost.json',
+    ],
+  },
+)

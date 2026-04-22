@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import type { AdminService } from '@/types/admin'
 import { Link, router } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import ConfirmModal from '@/components/admin/ConfirmModal.vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 
 defineOptions({ layout: AdminLayout })
 defineProps<{ services: AdminService[] }>()
+
+const serviceToDelete = ref<AdminService | null>(null)
 
 function toggleActive(service: AdminService) {
   router.patch(`/admin/services/${service.id}/toggle`, {}, {
@@ -14,9 +18,16 @@ function toggleActive(service: AdminService) {
 }
 
 function confirmDelete(service: AdminService) {
-  if (confirm(`Delete "${service.name}"? This cannot be undone.`)) {
-    router.delete(`/admin/services/${service.id}`)
+  serviceToDelete.value = service
+}
+
+function handleDeleteConfirmed() {
+  if (!serviceToDelete.value) {
+    return
   }
+  router.delete(`/admin/services/${serviceToDelete.value.id}`, {
+    onFinish: () => { serviceToDelete.value = null },
+  })
 }
 </script>
 
@@ -100,5 +111,14 @@ function confirmDelete(service: AdminService) {
         </tbody>
       </table>
     </div>
+
+    <ConfirmModal
+      :open="serviceToDelete !== null"
+      title="Delete service"
+      :message="serviceToDelete ? `Delete &quot;${serviceToDelete.name}&quot;? This cannot be undone.` : ''"
+      confirm-label="Delete"
+      @confirm="handleDeleteConfirmed"
+      @cancel="serviceToDelete = null"
+    />
   </div>
 </template>

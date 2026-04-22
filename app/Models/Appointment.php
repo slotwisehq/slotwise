@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $starts_at
  * @property Carbon $ends_at
  * @property AppointmentStatus $status
+ * @property Tenant $tenant
  */
 #[Fillable([
     'tenant_id',
