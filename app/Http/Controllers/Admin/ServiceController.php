@@ -21,7 +21,7 @@ class ServiceController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('admin/services/Form');
+        return Inertia::render('admin/services/Create');
     }
 
     public function store(StoreServiceRequest $request): RedirectResponse
@@ -33,7 +33,7 @@ class ServiceController extends Controller
 
     public function edit(Service $service): Response
     {
-        return Inertia::render('admin/services/Form', ['service' => $service]);
+        return Inertia::render('admin/services/Edit', ['service' => $service]);
     }
 
     public function update(UpdateServiceRequest $request, Service $service): RedirectResponse
