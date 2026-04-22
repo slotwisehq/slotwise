@@ -39,7 +39,7 @@ it('contains tenant name, service name, staff name, customer name, date, and can
     $mailable = new BookingConfirmedMail($appointment);
 
     $mailable->assertSeeInHtml('Test Salon');
-    $mailable->assertSeeInHtml('Haircut &amp; Style');
+    $mailable->assertSeeInHtml('Haircut & Style');
     $mailable->assertSeeInHtml('Jane Smith');
     $mailable->assertSeeInHtml('John Doe');
     $mailable->assertSeeInHtml('2025');
