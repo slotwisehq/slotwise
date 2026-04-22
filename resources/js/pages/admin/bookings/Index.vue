@@ -131,8 +131,9 @@ function formatDatetime(isoStr: string): string {
           :href="link.url"
           class="rounded px-3 py-1 text-sm"
           :class="link.active ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'"
-          v-html="link.label"
-        />
+        >
+          <span v-html="link.label" />
+        </Link>
         <span v-else class="rounded px-3 py-1 text-sm text-gray-400" v-html="link.label" />
       </template>
     </div>

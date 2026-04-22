@@ -1,15 +1,26 @@
 <script setup lang="ts">
 import type { AdminStaff } from '@/types/admin'
 import { Link, router } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import ConfirmModal from '@/components/admin/ConfirmModal.vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 
 defineOptions({ layout: AdminLayout })
 defineProps<{ staff: AdminStaff[] }>()
 
+const memberToDelete = ref<AdminStaff | null>(null)
+
 function confirmDelete(member: AdminStaff) {
-  if (confirm(`Remove "${member.name}"?`)) {
-    router.delete(`/admin/staff/${member.id}`)
+  memberToDelete.value = member
+}
+
+function handleDeleteConfirmed() {
+  if (!memberToDelete.value) {
+    return
   }
+  router.delete(`/admin/staff/${memberToDelete.value.id}`, {
+    onFinish: () => { memberToDelete.value = null },
+  })
 }
 </script>
 
@@ -91,5 +102,14 @@ function confirmDelete(member: AdminStaff) {
         </tbody>
       </table>
     </div>
+
+    <ConfirmModal
+      :open="memberToDelete !== null"
+      title="Remove staff member"
+      :message="memberToDelete ? `Remove &quot;${memberToDelete.name}&quot;?` : ''"
+      confirm-label="Remove"
+      @confirm="handleDeleteConfirmed"
+      @cancel="memberToDelete = null"
+    />
   </div>
 </template>

@@ -14,9 +14,9 @@ afterEach(fn () => TenantContext::set(null));
 it('completes the full booking flow: service picker → staff picker → slot picker → POST → confirmation + job queued', function () {
     Bus::fake();
 
-    $tenant  = Tenant::factory()->create(['slug' => 'e2e-salon']);
+    $tenant = Tenant::factory()->create(['slug' => 'e2e-salon']);
     $service = Service::factory()->for($tenant)->create([
-        'is_active'        => true,
+        'is_active' => true,
         'duration_minutes' => 60,
     ]);
 
@@ -54,8 +54,8 @@ it('completes the full booking flow: service picker → staff picker → slot pi
     $this->post(
         route('booking.store', [$tenant->slug, $service->id, $staff1->id]),
         [
-            'starts_at'      => '2025-01-06 09:00:00',
-            'customer_name'  => 'End-to-End Customer',
+            'starts_at' => '2025-01-06 09:00:00',
+            'customer_name' => 'End-to-End Customer',
             'customer_email' => 'e2e@example.com',
             'customer_phone' => null,
         ]

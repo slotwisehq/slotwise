@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { AdminAppointment } from '@/types/admin'
 import { router } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import ConfirmModal from '@/components/admin/ConfirmModal.vue'
 import StatusBadge from '@/components/admin/StatusBadge.vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 
@@ -9,6 +11,7 @@ defineOptions({ layout: AdminLayout })
 const props = defineProps<{ appointment: AdminAppointment }>()
 
 const cancellable = ['pending', 'confirmed']
+const showCancelModal = ref(false)
 
 function formatDatetime(isoStr: string): string {
   return new Date(isoStr).toLocaleString('en-GB', {
@@ -21,9 +24,8 @@ function formatDatetime(isoStr: string): string {
   })
 }
 
-function cancel() {
-  if (!confirm('Cancel this appointment?'))
-    return
+function handleCancelConfirmed() {
+  showCancelModal.value = false
   router.patch(`/admin/bookings/${props.appointment.id}/cancel`)
 }
 </script>
@@ -96,7 +98,7 @@ function cancel() {
           v-if="cancellable.includes(appointment.status)"
           type="button"
           class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-          @click="cancel"
+          @click="showCancelModal = true"
         >
           Cancel appointment
         </button>
@@ -109,5 +111,14 @@ function cancel() {
     <div class="mt-4">
       <a href="/admin/bookings" class="text-sm text-gray-500 hover:text-gray-700">← Back to bookings</a>
     </div>
+
+    <ConfirmModal
+      :open="showCancelModal"
+      title="Cancel appointment"
+      message="Cancel this appointment? The customer will not be notified automatically."
+      confirm-label="Cancel appointment"
+      @confirm="handleCancelConfirmed"
+      @cancel="showCancelModal = false"
+    />
   </div>
 </template>
