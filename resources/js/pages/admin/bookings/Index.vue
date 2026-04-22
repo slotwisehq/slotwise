@@ -16,7 +16,7 @@ const props = defineProps<{
 const filters = reactive({ ...props.filters })
 
 watch(filters, (val) => {
-  router.get('/admin/bookings', val as Record<string, string>, {
+  router.get('/admin/bookings', val, {
     preserveState: true,
     replace: true,
   })

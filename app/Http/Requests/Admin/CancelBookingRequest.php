@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Enums\AppointmentStatus;
+use App\Models\Appointment;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,6 +31,7 @@ class CancelBookingRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $v) {
+            /** @var Appointment $appointment */
             $appointment = $this->route('appointment');
             $cancellable = [AppointmentStatus::Pending, AppointmentStatus::Confirmed];
 

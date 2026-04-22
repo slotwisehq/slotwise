@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { AdminService } from '@/types/admin'
-import AdminLayout from '@/layouts/AdminLayout.vue'
 import { Form } from '@inertiajs/vue3'
+import AdminLayout from '@/layouts/AdminLayout.vue'
 import { update } from '@/routes/admin/services'
+
 defineOptions({ layout: AdminLayout })
 
 const props = defineProps<{
@@ -17,8 +18,8 @@ const props = defineProps<{
     </h1>
 
     <Form
-      v-bind="update.form(props.service)"
       v-slot="{ errors, processing }"
+      v-bind="update.form(props.service)"
       class="space-y-5 rounded-xl bg-white p-6 shadow-sm"
     >
       <div>
@@ -31,7 +32,9 @@ const props = defineProps<{
           class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
           :class="{ 'border-red-500': errors.name }"
         >
-        <p v-if="errors.name" class="mt-1 text-xs text-red-600">{{ errors.name }}</p>
+        <p v-if="errors.name" class="mt-1 text-xs text-red-600">
+          {{ errors.name }}
+        </p>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
@@ -46,7 +49,9 @@ const props = defineProps<{
             class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
             :class="{ 'border-red-500': errors.duration_minutes }"
           >
-          <p v-if="errors.duration_minutes" class="mt-1 text-xs text-red-600">{{ errors.duration_minutes }}</p>
+          <p v-if="errors.duration_minutes" class="mt-1 text-xs text-red-600">
+            {{ errors.duration_minutes }}
+          </p>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700">Price (€)</label>
@@ -60,7 +65,9 @@ const props = defineProps<{
             class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
             :class="{ 'border-red-500': errors.price }"
           >
-          <p v-if="errors.price" class="mt-1 text-xs text-red-600">{{ errors.price }}</p>
+          <p v-if="errors.price" class="mt-1 text-xs text-red-600">
+            {{ errors.price }}
+          </p>
         </div>
       </div>
 

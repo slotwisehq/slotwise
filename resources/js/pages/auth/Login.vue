@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AuthLayout from '@/layouts/AuthLayout.vue'
 import { Form } from '@inertiajs/vue3'
+import AuthLayout from '@/layouts/AuthLayout.vue'
 import { store } from '@/routes/login'
 
 defineOptions({ layout: AuthLayout })
@@ -12,9 +12,9 @@ defineOptions({ layout: AuthLayout })
       Admin Login
     </h1>
     <Form
+      v-slot="{ errors, processing }"
       v-bind="store.form()"
       :reset-on-success="['password']"
-      v-slot="{ errors, processing }"
       class="space-y-4"
     >
       <div>
@@ -28,7 +28,9 @@ defineOptions({ layout: AuthLayout })
           class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           :class="{ 'border-red-500': errors.email }"
         >
-        <p v-if="errors.email" class="mt-1 text-xs text-red-600">{{ errors.email }}</p>
+        <p v-if="errors.email" class="mt-1 text-xs text-red-600">
+          {{ errors.email }}
+        </p>
       </div>
 
       <div>
@@ -42,7 +44,9 @@ defineOptions({ layout: AuthLayout })
           class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           :class="{ 'border-red-500': errors.password }"
         >
-        <p v-if="errors.password" class="mt-1 text-xs text-red-600">{{ errors.password }}</p>
+        <p v-if="errors.password" class="mt-1 text-xs text-red-600">
+          {{ errors.password }}
+        </p>
       </div>
 
       <div class="flex items-center">

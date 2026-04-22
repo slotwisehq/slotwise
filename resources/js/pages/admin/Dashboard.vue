@@ -44,8 +44,12 @@ function formatTime(isoStr: string): string {
                 <td class="px-4 py-3 text-sm font-medium text-gray-900">
                   {{ appt.customer.name }}
                 </td>
-                <td class="px-4 py-3 text-sm text-gray-600">{{ appt.service.name }}</td>
-                <td class="px-4 py-3 text-sm text-gray-600">{{ appt.staff.name }}</td>
+                <td class="px-4 py-3 text-sm text-gray-600">
+                  {{ appt.service.name }}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600">
+                  {{ appt.staff.name }}
+                </td>
                 <td class="px-4 py-3">
                   <StatusBadge :status="appt.status" />
                 </td>

@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreStaffRequest;
 use App\Http\Requests\Admin\UpdateStaffRequest;
 use App\Models\Staff;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -36,9 +36,10 @@ class StaffController extends Controller
         $data = $request->safe()->except('avatar');
 
         if ($request->hasFile('avatar')) {
-            $tenantId = auth()->user()->tenant_id;
+            /** @var User $user */
+            $user = auth()->user();
             $data['avatar_path'] = $request->file('avatar')
-                ->store("avatars/$tenantId", 'public');
+                ->store("avatars/{$user->tenant_id}", 'public');
         }
 
         Staff::create($data);
@@ -66,9 +67,10 @@ class StaffController extends Controller
             if ($staff->avatar_path) {
                 Storage::disk('public')->delete($staff->avatar_path);
             }
-            $tenantId = auth()->user()->tenant_id;
+            /** @var User $user */
+            $user = auth()->user();
             $data['avatar_path'] = $request->file('avatar')
-                ->store("avatars/{$tenantId}", 'public');
+                ->store("avatars/{$user->tenant_id}", 'public');
         }
 
         $staff->update($data);

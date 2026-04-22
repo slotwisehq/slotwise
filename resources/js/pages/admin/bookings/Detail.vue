@@ -33,26 +33,40 @@ function cancel() {
     <div class="space-y-4 rounded-xl bg-white p-6 shadow-sm">
       <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
         <dt class="font-medium text-gray-500">Date &amp; Time</dt>
-        <dd class="text-gray-900">{{ formatDatetime(appointment.starts_at) }}</dd>
+        <dd class="text-gray-900">
+          {{ formatDatetime(appointment.starts_at) }}
+        </dd>
 
         <dt class="font-medium text-gray-500">Service</dt>
-        <dd class="text-gray-900">{{ appointment.service.name }}</dd>
+        <dd class="text-gray-900">
+          {{ appointment.service.name }}
+        </dd>
 
         <dt class="font-medium text-gray-500">Staff</dt>
-        <dd class="text-gray-900">{{ appointment.staff.name }}</dd>
+        <dd class="text-gray-900">
+          {{ appointment.staff.name }}
+        </dd>
 
         <dt class="font-medium text-gray-500">Customer</dt>
-        <dd class="text-gray-900">{{ appointment.customer.name }}</dd>
+        <dd class="text-gray-900">
+          {{ appointment.customer.name }}
+        </dd>
 
         <dt class="font-medium text-gray-500">Email</dt>
-        <dd class="text-gray-900">{{ appointment.customer.email }}</dd>
+        <dd class="text-gray-900">
+          {{ appointment.customer.email }}
+        </dd>
 
         <dt class="font-medium text-gray-500">Phone</dt>
-        <dd class="text-gray-900">{{ appointment.customer.phone ?? '—' }}</dd>
+        <dd class="text-gray-900">
+          {{ appointment.customer.phone ?? '—' }}
+        </dd>
 
         <template v-if="appointment.notes">
           <dt class="font-medium text-gray-500">Notes</dt>
-          <dd class="text-gray-900">{{ appointment.notes }}</dd>
+          <dd class="text-gray-900">
+            {{ appointment.notes }}
+          </dd>
         </template>
       </dl>
 

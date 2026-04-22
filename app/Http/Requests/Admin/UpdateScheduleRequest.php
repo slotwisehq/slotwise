@@ -35,8 +35,10 @@ class UpdateScheduleRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $v) {
-            foreach ($this->input('days', []) as $index => $day) {
-                if (! ($day['enabled'] ?? false)) {
+            /** @var array<int, array{enabled: bool, day_of_week: int, start_time: string|null, end_time: string|null}> $days */
+            $days = $this->input('days', []);
+            foreach ($days as $index => $day) {
+                if (! $day['enabled']) {
                     continue;
                 }
 

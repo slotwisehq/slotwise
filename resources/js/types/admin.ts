@@ -39,11 +39,11 @@ export interface AdminCustomer {
 export interface AdminAppointment {
   id: number
   starts_at: string
-  endss_at: string
+  ends_at: string
   status: 'pending' | 'confirmed' | 'cancelled' | 'no_show'
   notes: string | null
-  service: { id: number, name: string}
-  staff: { id: number, name: string}
+  service: { id: number, name: string }
+  staff: { id: number, name: string }
   customer: AdminCustomer
 }
 

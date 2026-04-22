@@ -57,11 +57,11 @@ it('upserts enabled days and deletes disabled days', function () {
     Schedule::factory()->forStaff($staff)->create(['day_of_week' => 1, 'start_time' => '09:00', 'end_time' => '17:00']);
 
     $days = array_merge(
+        disabledDays(-1),  // all disabled as baseline
         [
             ['day_of_week' => 0, 'enabled' => true, 'start_time' => '09:00', 'end_time' => '17:00'],
             ['day_of_week' => 1, 'enabled' => false, 'start_time' => null, 'end_time' => null],
-        ],
-        disabledDays(-1)  // rest disabled
+        ]
     );
     // Keep only 7 entries for the 7 days, remove the duplicates
     $uniqueDays = [];

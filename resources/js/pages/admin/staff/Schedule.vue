@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { AdminScheduleDay } from '@/types/admin'
-import AdminLayout from '@/layouts/AdminLayout.vue'
 import { useForm } from '@inertiajs/vue3'
+import AdminLayout from '@/layouts/AdminLayout.vue'
 
 defineOptions({ layout: AdminLayout })
 
 const props = defineProps<{
-  staff: { id: number; name: string }
+  staff: { id: number, name: string }
   days: AdminScheduleDay[]
 }>()
 
@@ -23,8 +23,12 @@ function submit() {
 
 <template>
   <div class="mx-auto max-w-xl">
-    <h1 class="mb-1 text-2xl font-bold text-gray-900">Schedule</h1>
-    <p class="mb-6 text-sm text-gray-500">{{ staff.name }}</p>
+    <h1 class="mb-1 text-2xl font-bold text-gray-900">
+      Schedule
+    </h1>
+    <p class="mb-6 text-sm text-gray-500">
+      {{ staff.name }}
+    </p>
 
     <form class="rounded-xl bg-white p-6 shadow-sm" @submit.prevent="submit">
       <div class="space-y-3">

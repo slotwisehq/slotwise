@@ -17,8 +17,8 @@ class BookingController extends Controller
     public function index(Request $request): Response
     {
         $appointments = Appointment::with(['service:id,name', 'staff:id,name', 'customer:id,name,email,phone'])
-            ->when($request->date_from, fn ($q) => $q->whereDate('starts_at', '>=', $request->date_from))
-            ->when($request->date_to, fn ($q) => $q->whereDate('starts_at', '<=', $request->date_to))
+            ->when($request->date_from, fn ($q) => $q->whereDate('starts_at', '>=', (string) $request->string('date_from')))
+            ->when($request->date_to, fn ($q) => $q->whereDate('starts_at', '<=', (string) $request->string('date_to')))
             ->when($request->staff_id, fn ($q) => $q->where('staff_id', $request->staff_id))
             ->when($request->status, fn ($q) => $q->where('status', $request->status))
             ->orderBy('starts_at', 'desc')

@@ -17,7 +17,9 @@ const nav = [
 ]
 
 function isActive(href: string, exact: boolean): boolean {
-  if (exact) return page.url === href || page.url === href + '/'
+  if (exact) {
+    return page.url === href || page.url === href + '/'
+  }
   return page.url.startsWith(href)
 }
 </script>
@@ -66,7 +68,9 @@ function isActive(href: string, exact: boolean): boolean {
 
       <!-- User footer -->
       <div class="border-t border-gray-200 px-4 py-4">
-        <p class="mb-2 truncate text-xs text-gray-500">{{ user?.name }}</p>
+        <p class="mb-2 truncate text-xs text-gray-500">
+          {{ user?.name }}
+        </p>
         <Link
           href="/logout"
           method="post"

@@ -4,5 +4,6 @@ export default antfu({
   ignores: [
     'README.md',
     'pnpm-workspace.yaml',
+    'boost.json',
   ],
 })

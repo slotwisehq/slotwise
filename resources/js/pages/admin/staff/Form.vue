@@ -1,9 +1,8 @@
-<!-- resources/js/pages/admin/staff/Form.vue -->
 <script setup lang="ts">
 import type { AdminStaff } from '@/types/admin'
-import AdminLayout from '@/layouts/AdminLayout.vue'
 import { useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
+import AdminLayout from '@/layouts/AdminLayout.vue'
 
 defineOptions({ layout: AdminLayout })
 
@@ -19,7 +18,9 @@ const avatarPreview = ref<string | null>(props.staff?.avatar_url ?? null)
 
 function onFileChange(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
+  if (!file) {
+    return
+  }
   form.avatar = file
   avatarPreview.value = URL.createObjectURL(file)
 }
@@ -56,8 +57,12 @@ function submit() {
             Upload photo
             <input type="file" accept="image/*" class="sr-only" @change="onFileChange">
           </label>
-          <p v-if="form.errors.avatar" class="mt-1 text-xs text-red-600">{{ form.errors.avatar }}</p>
-          <p class="mt-1 text-xs text-gray-400">JPG, PNG, GIF — max 2 MB</p>
+          <p v-if="form.errors.avatar" class="mt-1 text-xs text-red-600">
+            {{ form.errors.avatar }}
+          </p>
+          <p class="mt-1 text-xs text-gray-400">
+            JPG, PNG, GIF — max 2 MB
+          </p>
         </div>
       </div>
 
@@ -69,7 +74,9 @@ function submit() {
           class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
           :class="{ 'border-red-500': form.errors.name }"
         >
-        <p v-if="form.errors.name" class="mt-1 text-xs text-red-600">{{ form.errors.name }}</p>
+        <p v-if="form.errors.name" class="mt-1 text-xs text-red-600">
+          {{ form.errors.name }}
+        </p>
       </div>
 
       <div>
@@ -81,7 +88,9 @@ function submit() {
           class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
           :class="{ 'border-red-500': form.errors.bio }"
         />
-        <p v-if="form.errors.bio" class="mt-1 text-xs text-red-600">{{ form.errors.bio }}</p>
+        <p v-if="form.errors.bio" class="mt-1 text-xs text-red-600">
+          {{ form.errors.bio }}
+        </p>
       </div>
 
       <div class="flex items-center gap-3 pt-2">

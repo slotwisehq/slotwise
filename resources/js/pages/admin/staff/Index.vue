@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AdminStaff } from '@/types/admin'
-import AdminLayout from '@/layouts/AdminLayout.vue'
 import { Link, router } from '@inertiajs/vue3'
+import AdminLayout from '@/layouts/AdminLayout.vue'
 
 defineOptions({ layout: AdminLayout })
 defineProps<{ staff: AdminStaff[] }>()
@@ -16,7 +16,9 @@ function confirmDelete(member: AdminStaff) {
 <template>
   <div>
     <div class="mb-6 flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-gray-900">Staff</h1>
+      <h1 class="text-2xl font-bold text-gray-900">
+        Staff
+      </h1>
       <Link
         href="/admin/staff/create"
         class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
@@ -33,8 +35,12 @@ function confirmDelete(member: AdminStaff) {
       <table class="min-w-full divide-y divide-gray-100">
         <thead>
           <tr class="bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
-            <th class="px-4 py-3">Name</th>
-            <th class="px-4 py-3">Bio</th>
+            <th class="px-4 py-3">
+              Name
+            </th>
+            <th class="px-4 py-3">
+              Bio
+            </th>
             <th class="px-4 py-3" />
           </tr>
         </thead>

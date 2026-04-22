@@ -37,7 +37,9 @@ class ScheduleController extends Controller
 
     public function update(UpdateScheduleRequest $request, Staff $staff): RedirectResponse
     {
-        foreach ($request->validated()['days'] as $day) {
+        /** @var array<int, array{enabled: bool, day_of_week: int, start_time: string, end_time: string}> $days */
+        $days = $request->validated()['days'];
+        foreach ($days as $day) {
             if ($day['enabled']) {
                 Schedule::updateOrCreate(
                     ['staff_id' => $staff->id, 'day_of_week' => $day['day_of_week']],
