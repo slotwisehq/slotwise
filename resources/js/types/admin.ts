@@ -38,8 +38,8 @@ export interface AdminCustomer {
 
 export interface AdminAppointment {
   id: number
-  start_at: string
-  ends_at: string
+  starts_at: string
+  endss_at: string
   status: 'pending' | 'confirmed' | 'cancelled' | 'no_show'
   notes: string | null
   service: { id: number, name: string}
