@@ -33,7 +33,7 @@ jobs:
         run: composer lint
 
       - name: Run ESLint
-        run: eslint --fix .
+        run: npm run lint
 
       - name: Commit Changes
         uses: stefanzweifel/git-auto-commit-action@v7
