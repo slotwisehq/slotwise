@@ -34,6 +34,8 @@ class BookingController extends Controller
 
     public function show(Appointment $appointment): Response
     {
+        abort_if($appointment->tenant_id !== auth()->user()?->tenant_id, 404);
+
         $appointment->load(['service:id,name', 'staff:id,name', 'customer:id,name,email,phone']);
 
         assert($appointment->service !== null && $appointment->staff !== null && $appointment->customer !== null);
@@ -59,6 +61,8 @@ class BookingController extends Controller
 
     public function cancel(CancelBookingRequest $request, Appointment $appointment): RedirectResponse
     {
+        abort_if($appointment->tenant_id !== auth()->user()?->tenant_id, 404);
+
         $appointment->update(['status' => AppointmentStatus::Cancelled]);
 
         return back();

@@ -145,6 +145,8 @@ class BookingController extends Controller
 
     public function confirmation(Tenant $tenant, Appointment $appointment): Response
     {
+        abort_if($appointment->tenant_id !== $tenant->id, 404);
+
         $appointment->load('service', 'staff', 'customer');
 
         assert($appointment->service !== null && $appointment->staff !== null && $appointment->customer !== null);

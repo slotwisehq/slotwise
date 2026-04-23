@@ -7,13 +7,41 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 
 /** @property array<string, mixed>|null $settings */
 #[Fillable(['name', 'slug', 'plan', 'logo_path', 'settings'])]
-class Tenant extends Model
+class Tenant extends Model implements TenantContract
 {
     /** @use HasFactory<TenantFactory> */
     use HasFactory;
+
+    public function getTenantKeyName(): string
+    {
+        return 'id';
+    }
+
+    public function getTenantKey(): int|string
+    {
+        return $this->id;
+    }
+
+    public function getInternal(string $key): mixed
+    {
+        return $this->getAttribute('tenancy_'.$key);
+    }
+
+    public function setInternal(string $key, mixed $value): static
+    {
+        $this->setAttribute('tenancy_'.$key, $value);
+
+        return $this;
+    }
+
+    public function run(callable $callback): mixed
+    {
+        return $callback($this);
+    }
 
     /**
      * Get the attributes that should be cast.
