@@ -9,7 +9,6 @@ use App\Models\Customer;
 use App\Models\Service;
 use App\Models\Staff;
 use App\Models\Tenant;
-use DateMalformedStringException;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,25 +20,18 @@ class AppointmentFactory extends Factory
      * Define the model's default state.
      *
      * @return array<string, mixed>
-     *
-     * @throws DateMalformedStringException
      */
     public function definition(): array
     {
-        $tenant = Tenant::factory()->create();
-        $service = Service::factory()->for($tenant)->create();
-        $staff = Staff::factory()->for($tenant)->create();
-        $customer = Customer::factory()->for($tenant)->create();
         $startsAt = fake()->dateTimeBetween('-30 days', '+14 days');
-        $endsAt = (clone $startsAt)->modify("+$service->duration_minutes minutes");
 
         return [
-            'tenant_id' => $tenant->id,
-            'service_id' => $service->id,
-            'staff_id' => $staff->id,
-            'customer_id' => $customer->id,
+            'tenant_id' => Tenant::factory(),
+            'service_id' => Service::factory(),
+            'staff_id' => Staff::factory(),
+            'customer_id' => Customer::factory(),
             'starts_at' => $startsAt,
-            'ends_at' => $endsAt,
+            'ends_at' => (clone $startsAt)->modify('+60 minutes'),
             'status' => fake()->randomElement(AppointmentStatus::cases()),
             'payment_status' => PaymentStatus::Unpaid,
             'notes' => fake()->optional(0.3)->sentence(),

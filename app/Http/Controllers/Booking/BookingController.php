@@ -76,7 +76,16 @@ class BookingController extends Controller
 
     public function selectSlot(Tenant $tenant, Service $service, Staff $staff): Response
     {
-        $date = Carbon::parse(request()->query('date', now()->toDateString()));
+        $validated = request()->validate([
+            'date' => [
+                'nullable',
+                'date_format:Y-m-d',
+                'after_or_equal:today',
+                'before_or_equal:'.now()->addDays(90)->toDateString(),
+            ],
+        ]);
+
+        $date = Carbon::parse($validated['date'] ?? now()->toDateString());
 
         $slots = $this->availability
             ->getSlots($staff->id, $service->id, $date)
@@ -97,13 +106,15 @@ class BookingController extends Controller
 
     public function showCustomerForm(Tenant $tenant, Service $service, Staff $staff): Response
     {
-        $startsAt = request()->query('starts_at', '');
+        $validated = request()->validate([
+            'starts_at' => ['required', 'date_format:Y-m-d H:i:s', 'after:now'],
+        ]);
 
         return Inertia::render('booking/CustomerForm', [
             'tenant' => $this->tenantMeta($tenant),
             'service' => ['id' => $service->id, 'name' => $service->name, 'duration_minutes' => $service->duration_minutes],
             'staff' => ['id' => $staff->id, 'name' => $staff->name],
-            'starts_at' => $startsAt,
+            'starts_at' => $validated['starts_at'],
         ]);
     }
 
@@ -134,6 +145,8 @@ class BookingController extends Controller
 
     public function confirmation(Tenant $tenant, Appointment $appointment): Response
     {
+        abort_if($appointment->tenant_id !== $tenant->id, 404);
+
         $appointment->load('service', 'staff', 'customer');
 
         assert($appointment->service !== null && $appointment->staff !== null && $appointment->customer !== null);
