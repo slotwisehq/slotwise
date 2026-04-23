@@ -12,7 +12,6 @@ use App\Models\Customer;
 use App\Models\Service;
 use App\Models\Staff;
 use App\Models\Tenant;
-use App\Tenant\TenantContext;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -29,8 +28,6 @@ class BookingController extends Controller
 
     public function show(Tenant $tenant): Response
     {
-        TenantContext::set($tenant);
-
         $services = Service::where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name', 'duration_minutes', 'price'])
@@ -49,8 +46,6 @@ class BookingController extends Controller
 
     public function selectStaff(Tenant $tenant, Service $service): Response|RedirectResponse
     {
-        TenantContext::set($tenant);
-
         $staffMembers = Staff::has('schedules')
             ->orderBy('name')
             ->get(['id', 'name', 'bio', 'avatar_path'])
@@ -81,8 +76,6 @@ class BookingController extends Controller
 
     public function selectSlot(Tenant $tenant, Service $service, Staff $staff): Response
     {
-        TenantContext::set($tenant);
-
         $date = Carbon::parse(request()->query('date', now()->toDateString()));
 
         $slots = $this->availability
@@ -104,8 +97,6 @@ class BookingController extends Controller
 
     public function showCustomerForm(Tenant $tenant, Service $service, Staff $staff): Response
     {
-        TenantContext::set($tenant);
-
         $startsAt = request()->query('starts_at', '');
 
         return Inertia::render('booking/CustomerForm', [
@@ -118,8 +109,6 @@ class BookingController extends Controller
 
     public function store(StoreBookingRequest $request, Tenant $tenant, Service $service, Staff $staff): RedirectResponse
     {
-        TenantContext::set($tenant);
-
         $customer = Customer::firstOrCreate(
             ['tenant_id' => $tenant->id, 'email' => $request->customer_email],
             ['name' => $request->customer_name, 'phone' => $request->customer_phone],
@@ -145,8 +134,6 @@ class BookingController extends Controller
 
     public function confirmation(Tenant $tenant, Appointment $appointment): Response
     {
-        TenantContext::set($tenant);
-
         $appointment->load('service', 'staff', 'customer');
 
         assert($appointment->service !== null && $appointment->staff !== null && $appointment->customer !== null);

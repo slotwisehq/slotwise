@@ -63,7 +63,7 @@ class AvailabilityService
                 $slots->push($cursor->copy());
             }
 
-            $cursor->addMinutes($durationMinutes);
+            $cursor = $cursor->addMinutes($durationMinutes);
         }
 
         return $slots;

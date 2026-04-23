@@ -21,7 +21,7 @@ class MailDriver implements NotificationDriver
         $email = $appointment->customer?->email;
 
         if (! $email) {
-            Log::warning('SendBookingConfirmation: skipped — appointment #'.$appointment->id.'has no customer email.');
+            Log::warning('SendBookingConfirmation: skipped — appointment #'.$appointment->id.' has no customer email.');
 
             return;
         }

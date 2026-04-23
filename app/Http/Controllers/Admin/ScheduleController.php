@@ -43,7 +43,7 @@ class ScheduleController extends Controller
             if ($day['enabled']) {
                 Schedule::updateOrCreate(
                     ['staff_id' => $staff->id, 'day_of_week' => $day['day_of_week']],
-                    ['start_time' => $day['start_time'], 'end_time' => $day['end_time']]
+                    ['start_time' => $day['start_time'], 'end_time' => $day['end_time'], 'tenant_id' => $staff->tenant_id]
                 );
             } else {
                 Schedule::where('staff_id', $staff->id)
