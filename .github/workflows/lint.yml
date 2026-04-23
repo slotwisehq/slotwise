@@ -32,9 +32,6 @@ jobs:
       - name: Run Pint
         run: composer lint
 
-      - name: Lint Frontend
-        run: npm run lint:fix
-
       - name: Commit Changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
