@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\Staff;
 use App\Models\Tenant;
 use App\Tenant\TenantContext;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 
 afterEach(fn () => TenantContext::set(null));
@@ -42,8 +43,9 @@ it('completes the full booking flow: service picker → staff picker → slot pi
             ->has('staff', 2)
         );
 
-    // Step 3 — Slot picker (Monday 2025-01-06, schedule day_of_week=1)
-    $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff1->id]).'?date=2025-01-06')
+    // Step 3 — Slot picker (next Monday, within 90-day window, matches day_of_week=1 schedule)
+    $nextMonday = Carbon::now()->startOfWeek(Carbon::MONDAY)->addWeek()->toDateString();
+    $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff1->id]).'?date='.$nextMonday)
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('booking/SlotPicker')
@@ -54,7 +56,7 @@ it('completes the full booking flow: service picker → staff picker → slot pi
     $this->post(
         route('booking.store', [$tenant->slug, $service->id, $staff1->id]),
         [
-            'starts_at' => '2025-01-06 09:00:00',
+            'starts_at' => '2030-01-07 09:00:00',
             'customer_name' => 'End-to-End Customer',
             'customer_email' => 'e2e@example.com',
             'customer_phone' => null,

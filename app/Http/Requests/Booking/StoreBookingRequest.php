@@ -23,7 +23,7 @@ class StoreBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'starts_at' => ['required', 'date_format:Y-m-d H:i:s'],
+            'starts_at' => ['required', 'date_format:Y-m-d H:i:s', 'after:now'],
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['required', 'email', 'max:255'],
             'customer_phone' => ['nullable', 'string', 'max:50'],

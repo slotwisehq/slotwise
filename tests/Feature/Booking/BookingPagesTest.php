@@ -83,21 +83,102 @@ describe('slot picker', function () {
         [$tenant, $service] = makeTenantWithService();
         $staff = makeScheduledStaff($tenant);
 
-        // Monday 2025-01-06 — schedule day_of_week = 1
-        $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff->id]).'?date=2025-01-06')
+        // Next Monday — within the 90-day window, matches day_of_week=1 schedule
+        $monday = Carbon::now()->startOfWeek(Carbon::MONDAY)->addWeek()->toDateString();
+
+        $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff->id]).'?date='.$monday)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('booking/SlotPicker')
                 ->has('slots')
                 ->has('date')
-                ->where('date', '2025-01-06')
+                ->where('date', $monday)
             );
+    });
+
+    it('defaults to today when date is omitted', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff->id]))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('booking/SlotPicker')
+                ->where('date', now()->toDateString())
+            );
+    });
+
+    it('rejects a date in the past', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff->id]).'?date=2020-01-06')
+            ->assertRedirect();
+    });
+
+    it('rejects a date beyond 90 days', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $beyond = now()->addDays(91)->toDateString();
+
+        $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff->id]).'?date='.$beyond)
+            ->assertRedirect();
+    });
+
+    it('rejects a relative date string', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff->id]).'?date=next+century')
+            ->assertRedirect();
+    });
+});
+
+// ─── Customer form ───────────────────────────────────────────────────────────
+
+describe('customer form', function () {
+    it('renders the form when starts_at is a valid future datetime', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $this->get(route('booking.form', [$tenant->slug, $service->id, $staff->id]).'?starts_at=2030-01-07+09:00:00')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('booking/CustomerForm')
+                ->where('starts_at', '2030-01-07 09:00:00')
+            );
+    });
+
+    it('redirects back when starts_at is missing', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $this->get(route('booking.form', [$tenant->slug, $service->id, $staff->id]))
+            ->assertRedirect();
+    });
+
+    it('redirects back when starts_at is a past datetime', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $this->get(route('booking.form', [$tenant->slug, $service->id, $staff->id]).'?starts_at=2020-01-06+09:00:00')
+            ->assertRedirect();
+    });
+
+    it('redirects back when starts_at is a relative string', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $this->get(route('booking.form', [$tenant->slug, $service->id, $staff->id]).'?starts_at=next+year')
+            ->assertRedirect();
     });
 });
 
 // ─── Store (POST booking) ─────────────────────────────────────────────────────
 
 describe('store', function () {
+    // 2030-01-07 is a Monday, within the 09:00-17:00 test schedule
     it('creates an Appointment and redirects to confirmation on valid data', function () {
         Bus::fake();
 
@@ -105,7 +186,7 @@ describe('store', function () {
         $staff = makeScheduledStaff($tenant);
 
         $this->post(route('booking.store', [$tenant->slug, $service->id, $staff->id]), [
-            'starts_at' => '2025-01-06 09:00:00',
+            'starts_at' => '2030-01-07 09:00:00',
             'customer_name' => 'Alice Martin',
             'customer_email' => 'alice@example.com',
             'customer_phone' => null,
@@ -127,18 +208,18 @@ describe('store', function () {
             'staff_id' => $staff->id,
             'service_id' => $service->id,
             'customer_id' => $customer->id,
-            'starts_at' => Carbon::parse('2025-01-06 09:00:00'),
-            'ends_at' => Carbon::parse('2025-01-06 10:00:00'),
+            'starts_at' => Carbon::parse('2030-01-07 09:00:00'),
+            'ends_at' => Carbon::parse('2030-01-07 10:00:00'),
             'status' => AppointmentStatus::Confirmed,
             'payment_status' => PaymentStatus::Unpaid,
             'notes' => null,
         ]);
 
         // First visit to establish referrer
-        $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff->id]).'?date=2025-01-06');
+        $this->get(route('booking.slots', [$tenant->slug, $service->id, $staff->id]).'?date=2030-01-07');
 
         $this->post(route('booking.store', [$tenant->slug, $service->id, $staff->id]), [
-            'starts_at' => '2025-01-06 09:00:00',
+            'starts_at' => '2030-01-07 09:00:00',
             'customer_name' => 'Bob Smith',
             'customer_email' => 'bob@example.com',
             'customer_phone' => null,
@@ -152,10 +233,32 @@ describe('store', function () {
         $staff = makeScheduledStaff($tenant);
 
         $this->post(route('booking.store', [$tenant->slug, $service->id, $staff->id]), [
-            'starts_at' => '2025-01-06 09:00:00',
+            'starts_at' => '2030-01-07 09:00:00',
             // customer_name and customer_email missing
         ])->assertRedirect()
             ->assertSessionHasErrors(['customer_name', 'customer_email']);
+    });
+
+    it('rejects a starts_at in the past', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $this->post(route('booking.store', [$tenant->slug, $service->id, $staff->id]), [
+            'starts_at' => '2020-01-06 09:00:00',
+            'customer_name' => 'Alice Martin',
+            'customer_email' => 'alice@example.com',
+        ])->assertSessionHasErrors(['starts_at']);
+    });
+
+    it('rejects a starts_at that is not a valid datetime format', function () {
+        [$tenant, $service] = makeTenantWithService();
+        $staff = makeScheduledStaff($tenant);
+
+        $this->post(route('booking.store', [$tenant->slug, $service->id, $staff->id]), [
+            'starts_at' => 'next year',
+            'customer_name' => 'Alice Martin',
+            'customer_email' => 'alice@example.com',
+        ])->assertSessionHasErrors(['starts_at']);
     });
 });
 

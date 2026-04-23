@@ -34,10 +34,26 @@ class BookingController extends Controller
 
     public function show(Appointment $appointment): Response
     {
-        $appointment->load(['service', 'staff', 'customer']);
+        $appointment->load(['service:id,name', 'staff:id,name', 'customer:id,name,email,phone']);
+
+        assert($appointment->service !== null && $appointment->staff !== null && $appointment->customer !== null);
 
         return Inertia::render('admin/bookings/Detail', [
-            'appointment' => $appointment,
+            'appointment' => [
+                'id' => $appointment->id,
+                'starts_at' => $appointment->starts_at->toIso8601String(),
+                'ends_at' => $appointment->ends_at->toIso8601String(),
+                'status' => $appointment->status->value,
+                'notes' => $appointment->notes,
+                'service' => ['id' => $appointment->service->id, 'name' => $appointment->service->name],
+                'staff' => ['id' => $appointment->staff->id, 'name' => $appointment->staff->name],
+                'customer' => [
+                    'id' => $appointment->customer->id,
+                    'name' => $appointment->customer->name,
+                    'email' => $appointment->customer->email,
+                    'phone' => $appointment->customer->phone,
+                ],
+            ],
         ]);
     }
 
