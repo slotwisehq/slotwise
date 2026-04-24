@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreStaffRequest;
 use App\Http\Requests\Admin\UpdateStaffRequest;
 use App\Models\Staff;
+use App\Models\Tenant;
 use App\Models\User;
 use App\Tenant\TenantContext;
 use Illuminate\Http\RedirectResponse;
@@ -41,6 +42,7 @@ class StaffController extends Controller
 
     public function store(StoreStaffRequest $request): RedirectResponse
     {
+        /** @var Tenant $tenant */
         $tenant = TenantContext::current();
 
         try {

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreServiceRequest;
 use App\Http\Requests\Admin\UpdateServiceRequest;
 use App\Models\Service;
+use App\Models\Tenant;
 use App\Tenant\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -34,6 +35,7 @@ class ServiceController extends Controller
 
     public function store(StoreServiceRequest $request): RedirectResponse
     {
+        /** @var Tenant $tenant */
         $tenant = TenantContext::current();
 
         try {

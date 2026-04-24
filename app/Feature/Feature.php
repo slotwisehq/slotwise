@@ -9,6 +9,7 @@ class Feature
 {
     public static function check(string $feature, Tenant $tenant): bool
     {
+        /** @var ?string[] $allowedPlans */
         $allowedPlans = config("features.$feature");
 
         if ($allowedPlans === null) {
