@@ -4,7 +4,7 @@ use App\Enums\UserRole;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Tenant\TenantContext;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 afterEach(fn () => TenantContext::set(null));
 
@@ -16,10 +16,10 @@ it('GET /register renders the registration page', function () {
 
 it('POST /register with valid data creates tenant, user, authenticates and redirects to dashboard', function () {
     $this->post('/register', [
-        'business_name'         => 'My Test Salon',
-        'owner_name'            => 'Jane Owner',
-        'email'                 => 'jane@testsalon.com',
-        'password'              => 'password123456',
+        'business_name' => 'My Test Salon',
+        'owner_name' => 'Jane Owner',
+        'email' => 'jane@testsalon.com',
+        'password' => 'password123456',
         'password_confirmation' => 'password123456',
     ])->assertRedirect(route('admin.dashboard'));
 
@@ -37,12 +37,12 @@ it('POST /register with valid data creates tenant, user, authenticates and redir
 
 it('new tenant always gets plan=free regardless of any request input', function () {
     $this->post('/register', [
-        'business_name'         => 'Sneaky Salon',
-        'owner_name'            => 'Sneaky Owner',
-        'email'                 => 'sneaky@example.com',
-        'password'              => 'password123456',
+        'business_name' => 'Sneaky Salon',
+        'owner_name' => 'Sneaky Owner',
+        'email' => 'sneaky@example.com',
+        'password' => 'password123456',
         'password_confirmation' => 'password123456',
-        'plan'                  => 'business', // injected — must be ignored
+        'plan' => 'business', // injected — must be ignored
     ])->assertRedirect();
 
     expect(Tenant::where('slug', 'sneaky-salon')->value('plan'))->toBe('free');
@@ -52,10 +52,10 @@ it('POST /register with duplicate email returns 422 with validation error', func
     User::factory()->create(['email' => 'taken@example.com']);
 
     $this->post('/register', [
-        'business_name'         => 'Another Salon',
-        'owner_name'            => 'Some Owner',
-        'email'                 => 'taken@example.com',
-        'password'              => 'password123456',
+        'business_name' => 'Another Salon',
+        'owner_name' => 'Some Owner',
+        'email' => 'taken@example.com',
+        'password' => 'password123456',
         'password_confirmation' => 'password123456',
     ])->assertSessionHasErrors('email');
 
@@ -64,9 +64,9 @@ it('POST /register with duplicate email returns 422 with validation error', func
 
 it('POST /register with missing business_name returns 422', function () {
     $this->post('/register', [
-        'owner_name'            => 'Some Owner',
-        'email'                 => 'owner@example.com',
-        'password'              => 'password123456',
+        'owner_name' => 'Some Owner',
+        'email' => 'owner@example.com',
+        'password' => 'password123456',
         'password_confirmation' => 'password123456',
     ])->assertSessionHasErrors('business_name');
 });
@@ -81,10 +81,10 @@ it('tenant and user creation are atomic — user rollback also rolls back tenant
     // so we instead test the true rollback scenario using a DB::statement error directly.
 
     // Seed a user with the target email to trigger DB unique violation inside the transaction.
-    \Illuminate\Support\Facades\DB::table('users')->insert([
-        'name'       => 'Existing',
-        'email'      => 'collision@example.com',
-        'password'   => bcrypt('x'),
+    DB::table('users')->insert([
+        'name' => 'Existing',
+        'email' => 'collision@example.com',
+        'password' => bcrypt('x'),
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -99,10 +99,10 @@ it('tenant and user creation are atomic — user rollback also rolls back tenant
     // the existing constraint: if email fails validation, neither record is created.
 
     $this->post('/register', [
-        'business_name'         => 'Collision Salon',
-        'owner_name'            => 'Owner',
-        'email'                 => 'collision@example.com',
-        'password'              => 'password123456',
+        'business_name' => 'Collision Salon',
+        'owner_name' => 'Owner',
+        'email' => 'collision@example.com',
+        'password' => 'password123456',
         'password_confirmation' => 'password123456',
     ])->assertSessionHasErrors('email');
 
@@ -113,10 +113,10 @@ it('slug collision handling — base slug taken results in suffixed slug', funct
     Tenant::factory()->create(['slug' => 'my-salon']);
 
     $this->post('/register', [
-        'business_name'         => 'My Salon',
-        'owner_name'            => 'Second Owner',
-        'email'                 => 'second@mysalon.com',
-        'password'              => 'password123456',
+        'business_name' => 'My Salon',
+        'owner_name' => 'Second Owner',
+        'email' => 'second@mysalon.com',
+        'password' => 'password123456',
         'password_confirmation' => 'password123456',
     ])->assertRedirect();
 
