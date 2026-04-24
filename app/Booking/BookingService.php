@@ -2,6 +2,7 @@
 
 namespace App\Booking;
 
+use App\Booking\Exceptions\PlanLimitException;
 use App\Booking\Exceptions\SlotUnavailableException;
 use App\Enums\AppointmentStatus;
 use App\Enums\PaymentStatus;
@@ -9,6 +10,7 @@ use App\Jobs\SendBookingConfirmation;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Staff;
+use App\Models\Tenant;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +23,7 @@ class BookingService
 
     public function __construct(
         private readonly AvailabilityService $availability,
+        private readonly PlanLimitChecker $limits,
     ) {
         //
     }
@@ -30,11 +33,16 @@ class BookingService
      *
      * @param  array{tenant_id: int, staff_id: int, service_id: int, customer_id: int, starts_at: Carbon, notes?: string|null}  $data
      *
+     * @throws PlanLimitException
      * @throws SlotUnavailableException
      * @throws Throwable
      */
     public function create(array $data): Appointment
     {
+        $tenant = Tenant::findOrFail($data['tenant_id']);
+
+        $this->limits->assertCanCreateBooking($tenant);
+
         $startsAt = $data['starts_at'];
 
         // Phase 1: quick pre-flight outside the transaction.
@@ -51,8 +59,6 @@ class BookingService
 
         return DB::transaction(function () use ($data, $startsAt) {
             // Serialize concurrent bookings for this staff member by locking the Staff row.
-            // Two simultaneous requests for the same staff block here; the second unblocks only
-            // after the first commits, ensuring it sees up-to-date appointment data in the re-check below.
             Staff::where('id', $data['staff_id'])->lockForUpdate()->firstOrFail();
 
             // Test injection point - null in production; set by the concurrency test.

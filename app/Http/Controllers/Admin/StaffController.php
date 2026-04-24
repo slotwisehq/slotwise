@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Booking\Exceptions\PlanLimitException;
+use App\Booking\PlanLimitChecker;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreStaffRequest;
 use App\Http\Requests\Admin\UpdateStaffRequest;
 use App\Models\Staff;
+use App\Models\Tenant;
 use App\Models\User;
+use App\Tenant\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -14,6 +18,11 @@ use Inertia\Response;
 
 class StaffController extends Controller
 {
+    public function __construct(private readonly PlanLimitChecker $limits)
+    {
+        //
+    }
+
     public function index(): Response
     {
         $staff = Staff::orderBy('name')->get()->map(fn (Staff $s) => [
@@ -33,6 +42,15 @@ class StaffController extends Controller
 
     public function store(StoreStaffRequest $request): RedirectResponse
     {
+        /** @var Tenant $tenant */
+        $tenant = TenantContext::current();
+
+        try {
+            $this->limits->assertCanAddStaff($tenant);
+        } catch (PlanLimitException $e) {
+            return back()->withErrors(['plan' => $e->getMessage()]);
+        }
+
         $data = $request->safe()->except('avatar');
 
         if ($request->hasFile('avatar')) {
